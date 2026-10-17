@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://nominatim.openstreetmap.org;" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>HealthX | Hyderabad Hospital Finder, Cost Estimator &amp; Family Health Locker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Consistent Inter Font + JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- Utility bar: language + voice -->
+  <div class="accessibility-bar">
+    <div class="utility-inner">
+      <div class="utility-group utility-lang">
+        <span class="utility-label">Language</span>
+        <div class="lang-switcher" role="group" aria-label="Select language">
+          <button type="button" class="lang-btn active" onclick="setAppLanguage('en', this)">English</button>
+          <button type="button" class="lang-btn" onclick="setAppLanguage('te', this)" lang="te">తెలుగు</button>
+          <button type="button" class="lang-btn" onclick="setAppLanguage('hi', this)" lang="hi">हिंदी</button>
+        </div>
+      </div>
+      <div class="utility-group">
+        <button type="button" class="voice-assist-pill" onclick="startVoiceNavigation()" aria-label="Voice search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>
+          <span id="voiceNavLabel" data-i18n="voiceBtn">Voice search</span>
+        </button>
+        <span id="liveCoordsBadge" class="mono coords-pill">Pin: 17.3457°N, 78.3746°E</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky main header -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-top">
+        <button type="button" class="brand" onclick="switchView('home')" aria-label="HealthX home">
+          <span class="brand-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              <path d="M7 12h2l1.5-3 2.5 6 1.5-3H17" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="brand-text">
+            <span class="brand-title">Health<span>X</span></span>
+            <span class="brand-sub" data-i18n="brandSub">Healthcare, made clearer.</span>
+          </span>
+        </button>
+
+        <div class="nav-actions">
+          <button class="gps-btn" id="gpsBtn" onclick="toggleLiveGPSTracking()" title="Use your live GPS position" aria-label="Use live GPS">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/>
+            </svg>
+            <span id="gpsBtnText" data-i18n="gpsStart">Start Live GPS</span>
+          </button>
+          <button type="button" class="btn-voice-main" onclick="startVoiceNavigation()">
+            🎙️ <span id="voiceMainBtnText" data-i18n="sigSpeakBtn">Tap &amp; Speak Now</span>
+          </button>
+          
+
+          <label class="location-pill" title="Choose your Hyderabad neighbourhood">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <path d="M12 21s-7-6.75-7-12a7 7 0 1 1 14 0c0 5.25-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>
+            </svg>
+            <select id="userZoneSelect" aria-label="Select Hyderabad area" onchange="updateUserLocation()"></select>
+          </label>
+
+          <select id="roleSwitcher" class="role-select" aria-label="Switch portal" onchange="requestRoleSwitch(this.value)">
+            <option value="patient">Patient view</option>
+            <option value="hospital_admin">Hospital admin</option>
+            <option value="doctor">Doctor portal</option>
+          </select>
+        </div>
+      </div>
+
+      <nav class="nav-links" id="desktopNav" aria-label="Primary">
+        <button class="nav-btn active" data-view="home" onclick="switchView('home')" data-i18n="navHome">Home</button>
+        <button class="nav-btn" data-view="hospitals" onclick="switchView('hospitals')" data-i18n="navHospitals">Hospitals</button>
+        <button class="nav-btn" data-view="doctors" onclick="switchView('doctors')" data-i18n="navDoctors">Doctors</button>
+        <button class="nav-btn" data-view="estimator" onclick="switchView('estimator')" data-i18n="navCosts">Costs</button>
+        <button class="nav-btn" data-view="family" onclick="switchView('family')" data-i18n="navFamily">Family</button>
+        <button class="nav-btn" data-view="records" onclick="switchView('records')" data-i18n="navRecords">Health Locker</button>
+        <button class="nav-btn" data-view="transactions" onclick="switchView('transactions')">
+          <span data-i18n="navTxns">Transactions</span><span class="nav-count" id="navTxnCount">2</span>
+        </button>
+        <button class="nav-btn" data-view="compare" onclick="switchView('compare')">
+          <span data-i18n="navCompare">Compare</span><span class="nav-count" id="navCompareCount">3</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Toast Notification -->
+  <div id="toastBox" class="toast" role="status" aria-live="polite">Action completed</div>
+
+  <!-- =========================================================
+       VIEW 1: HOME DASHBOARD
+  ========================================================== -->
+  <main id="view-home" class="view-section active">
+    <div class="container">
+
+      <!-- =======================================================
+           1. SIGNATURE VOICE & MULTILINGUAL ACCESSIBILITY BANNER
+      ======================================================== -->
+
+      <!-- =======================================================
+           2. HERO + ATTACHED PHOTO DASHBOARD CARD SIDE-BY-SIDE
+           (Shows full width on mobile, and as an interactive card on desktop so you always see it!)
+      ======================================================== -->
+      <div class="top-showcase-grid">
+        <!-- Left: Recommended Mobile Dashboard Structure from Your Photo -->
+        <section class="mobile-prototype-card" id="mobileDashboardCard" aria-label="Recommended Dashboard Structure">
+          <div class="mp-navy-header">
+            <div class="mp-brand-left">
+              <div class="mp-teal-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  <path d="M7 12h2l1.5-3 2.5 6 1.5-3H17" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="mp-title">HealthX</div>
+                <div class="mp-subtitle" data-i18n="mpTagline">Healthcare, made clearer.</div>
+              </div>
+            </div>
+            <span class="mp-proto-pill">Male</span>
+          </div>
+
+          <div class="mp-white-body">
+            <h2 class="mp-greeting" data-i18n="mpGreeting">Good morning, Syed Zaahak Husain.</h2>
+            <p class="mp-question" data-i18n="mpQuestion">What healthcare service are you looking for?</p>
+
+            <div class="mp-search-box">
+              <div class="mp-input-row">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.2">
+                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <input type="text" id="mobileProtoSearchInput" data-i18n-placeholder="mpSearchPlaceholder" placeholder="Search hospitals, doctors or procedures" oninput="syncMobileSearch(this.value)" />
+                <button type="button" class="mp-mic-btn" onclick="startVoiceNavigation()" title="Voice Search">🎙️</button>
+              </div>
+              <button type="button" class="mp-compare-cta" onclick="scrollToHomeResults()" data-i18n="mpCompareBtn">
+                Compare Healthcare Costs
+              </button>
+            </div>
+
+            <div class="mp-grid-2x2">
+              <button type="button" class="mp-tile" onclick="switchView('hospitals')">
+                <div class="mp-tile-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#007A87" stroke-width="2">
+                    <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 7v4M10 9h4M8 15h2M14 15h2M8 18h2M14 18h2"/>
+                  </svg>
+                </div>
+                <div class="mp-tile-title" data-i18n="mpTileHosp">Find Hospitals</div>
+                <div class="mp-tile-sub" data-i18n="mpTileHospSub">Explore providers</div>
+              </button>
+
+              <button type="button" class="mp-tile" onclick="switchView('estimator')">
+                <div class="mp-tile-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#007A87" stroke-width="2">
+                    <path d="M6 3h12a1 1 0 0 1 1 1v17l-3-2-3 2-3-2-3 2V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6"/>
+                  </svg>
+                </div>
+                <div class="mp-tile-title" data-i18n="mpTileCost">Cost Estimator</div>
+                <div class="mp-tile-sub" data-i18n="mpTileCostSub">Understand expenses</div>
+              </button>
+
+              <button type="button" class="mp-tile" onclick="switchView('doctors')">
+                <div class="mp-tile-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#007A87" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 9h18M9 14l2 2 4-4"/>
+                  </svg>
+                </div>
+                <div class="mp-tile-title" data-i18n="mpTileAppt">Appointments</div>
+                <div class="mp-tile-sub" data-i18n="mpTileApptSub">Manage visits</div>
+              </button>
+
+              <button type="button" class="mp-tile" onclick="switchView('records')">
+                <div class="mp-tile-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#007A87" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    <path d="M12 11.5c-.8-1-2.5-1-3 0-.6 1 .2 2.4 3 4 2.8-1.6 3.6-3 3-4-.5-1-2.2-1-3 0z"/>
+                  </svg>
+                </div>
+                <div class="mp-tile-title" data-i18n="mpTileLocker">Health Locker</div>
+                <div class="mp-tile-sub" data-i18n="mpTileLockerSub">Organize records</div>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: Main Omnibox Search & Live GPS Control -->
+        <div>
+          <!-- Live GPS Radar Status Bar -->
+          <div class="gps-radar-bar" id="gpsRadarBanner" style="margin-top:0;margin-bottom:16px;">
+            <div class="gps-radar-left">
+              <span class="radar-ping"></span>
+              <div>
+                <strong id="gpsStatusHeadline">Active Area Pin: Himayath Sagar (Lords College)</strong>
+                <div id="gpsStatusSub" class="gps-sub">Click "Start Live GPS" to lock onto your exact street coordinates in Hyderabad.</div>
+              </div>
+            </div>
+            <div class="gps-radar-actions">
+              <button class="btn-primary small-btn" onclick="toggleLiveGPSTracking()" data-i18n="gpsBannerBtn">
+                📡 Use Real-Time GPS
+              </button>
+            </div>
+          </div>
+
+          <section class="hero" style="margin-top:0;">
+            <div class="badge-tag">
+              <span data-i18n="heroBadge">TRANSPARENT HEALTHCARE, RIGHT AROUND THE CORNER • 48 HYDERABAD PROVIDERS</span>
+            </div>
+            <h1 data-i18n="heroTitle">Compare Exact <span>Surgery, Scan &amp; Checkup Costs</span> Near You.</h1>
+            <p data-i18n="heroParagraph">Find the closest NABH/JCI hospitals and NABL diagnostic chains around Himayath Sagar, Gandipet, and all 38 Hyderabad areas, inspect itemized package breakdowns, and book cashless or UPI-verified slots.</p>
+
+            <div class="search-command">
+              <div class="search-field">
+                <label for="homeProcedureInput" data-i18n="lblSearchProc">Surgery, Operation, Scan or Hospital</label>
+                <input type="text" id="homeProcedureInput" maxlength="80" placeholder="e.g., Knee Replacement, 3T MRI, Olive, Yashoda, Vijaya..." oninput="renderHomeSurgeryResults()" />
+              </div>
+              <div class="search-field">
+                <label for="homeCategorySelect" data-i18n="lblCategory">Category</label>
+                <select id="homeCategorySelect" onchange="renderHomeSurgeryResults()">
+                  <option value="ALL">All Surgeries, Scans &amp; Checkups</option>
+                  <option value="Surgery">Surgeries &amp; Inpatient Operations</option>
+                  <option value="Checkup">Diagnostic Scans &amp; Health Checkups</option>
+                  <option value="DiagnosticChain">NABL Diagnostic Chains Only (7)</option>
+                </select>
+              </div>
+              <div class="search-field">
+                <label for="homeSortSelect" data-i18n="lblSortBy">Sort Results By</label>
+                <select id="homeSortSelect" onchange="renderHomeSurgeryResults()">
+                  <option value="nearest_best">Nearest to Me &amp; Best Rated</option>
+                  <option value="price_low">Lowest Package Estimate</option>
+                  <option value="rating_high">Highest Clinical Rating</option>
+                </select>
+              </div>
+              <button class="btn-primary search-submit-btn" onclick="scrollToHomeResults()" data-i18n="btnSearchCosts">
+                Search Costs
+              </button>
+            </div>
+
+            <div class="quick-pills">
+              <span data-i18n="lblPopular">Easy Nearby Access:</span>
+              <button class="chip active" onclick="quickSelectProcedure('ALL', this)">All Packages</button>
+              <button class="chip" onclick="filterOnlyDiagnostics()">🧪 Nearby Diagnostic Centre</button>
+              <button class="chip" onclick="quickSelectProcedure('Total Knee Replacement', this)">Knee Replacement</button>
+              <button class="chip" onclick="quickSelectProcedure('Coronary Angioplasty', this)">Angioplasty</button>
+              <button class="chip" onclick="quickSelectProcedure('Cataract Phaco Surgery', this)">Cataract</button>
+              <button class="chip" onclick="quickSelectProcedure('3 Tesla MRI Brain', this)">3T MRI Scan</button>
+              <button class="chip" onclick="quickSelectProcedure('Full Body Master', this)">Master Checkup</button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- =======================================================
+           3. MEDGRID FAMILY HEALTH GRAPH (EMBEDDED DIRECTLY ON HOME PAGE!)
+      ======================================================== -->
+      <section id="homeFamilyGraphSection" style="margin-top:38px;">
+        <div class="section-head" style="margin-top:0;">
+          <div>
+            <h2>👨‍👩‍👧‍👦 <span data-i18n="famSecTitle">HealthX Family Health Graph — One Family, One Connected Dashboard</span></h2>
+            <p data-i18n="famSecSub">Click any family member below to manage children's appointments, organize elderly relatives' medical records, and track prescribed medication schedules &amp; reminders.</p>
+          </div>
+          <div class="filter-group">
+            <button class="btn-primary small-btn" onclick="openAddFamilyMemberModal()">+ Add Family Member</button>
+          </div>
+        </div>
+
+        <div id="homeFamilyMembersGrid" class="family-nodes-grid"></div>
+        <div id="homeFamilyActiveDetailPanel" class="results-panel" style="margin-top:16px;"></div>
+      </section>
+
+      <!-- TOP 3 HOSPITALS NEAR ME -->
+      <section>
+        <div class="section-head">
+          <div>
+            <h2>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2.3">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+              </svg>
+              <span data-i18n="secTop3Hosp">Top 3 Hospitals Nearest to</span> <span id="currentZoneLabel" class="highlight-zone">Himayath Sagar (Lords College)</span>
+            </h2>
+            <p data-i18n="secTop3HospSub">Ranked dynamically by live distance from your GPS position or selected Hyderabad neighborhood.</p>
+          </div>
+          <div class="filter-group">
+            <button class="btn-secondary" onclick="switchView('hospitals')" data-i18n="btnBrowseAll">Browse All 48 Providers →</button>
+          </div>
+        </div>
+
+        <div id="top3Container" class="top3-grid"></div>
+      </section>
+
+      <!-- TOP 3 DIAGNOSTIC CHAINS NEAR ME -->
+      <section id="nearestDiagSection">
+        <div class="section-head">
+          <div>
+            <h2>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2.3">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <span data-i18n="secTop3Diag">Top 3 NABL Diagnostic &amp; Scan Centers Near</span> <span class="highlight-zone-diag">Himayath Sagar (Lords College)</span>
+            </h2>
+            <p data-i18n="secTop3DiagSub">Standalone NABL diagnostic chains (Vijaya, Lucid, Aarthi, Tenet, Tapadia, MedPlus, Redcliffe) for outpatient MRI, CT, Ultrasound, and blood panels.</p>
+          </div>
+          <button class="btn-secondary" onclick="filterOnlyDiagnostics()">Compare Diagnostic Checkup Prices →</button>
+        </div>
+
+        <div id="top3DiagContainer" class="top3-grid"></div>
+      </section>
+
+      <!-- SURGERY & CHECKUP MATCHES (NEAREST & BEST PROVIDERS) -->
+      <section id="homeSurgerySection">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="secMatchesTitle">Hospitals &amp; Diagnostic Centers Performing Your Selected Procedure</h2>
+            <p data-i18n="secMatchesSub">Transparent side-by-side estimates with full package inclusions, exclusions, and instant booking checkout.</p>
+          </div>
+          <div class="tier-selector" title="Switch room category to recalculate inpatient surgery estimates">
+            <button class="tier-btn active" onclick="setRoomTier(1, this)">General Ward (1x)</button>
+            <button class="tier-btn" onclick="setRoomTier(1.22, this)">Twin Sharing (1.22x)</button>
+            <button class="tier-btn" onclick="setRoomTier(1.48, this)">Single AC (1.48x)</button>
+            <button class="tier-btn" onclick="setRoomTier(1.85, this)">Deluxe Suite (1.85x)</button>
+          </div>
+        </div>
+
+        <div class="results-panel">
+          <div class="results-toolbar">
+            <div>
+              <strong id="homeResultSummary" class="summary-title">Showing verified package estimates across Hyderabad</strong>
+              <div class="summary-sub">Inpatient surgeries scale with selected Room Tier; Outpatient Scans &amp; Checkups show direct NABL package rates.</div>
+            </div>
+            <div class="filter-group">
+              <span class="filter-label">Max Budget:</span>
+              <select id="homeBudgetFilter" class="role-select" onchange="renderHomeSurgeryResults()">
+                <option value="9999999">Any Budget</option>
+                <option value="5000">Under ₹5,000 (Blood Panels &amp; Scans)</option>
+                <option value="20000">Under ₹20,000 (MRI, PET-CT, Checkups)</option>
+                <option value="85000">Under ₹85,000 (Daycare &amp; Laparoscopy)</option>
+                <option value="175000">Under ₹1,75,000 (Major Surgeries)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="homeSurgeryGrid" class="surgery-match-grid"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =========================================================
+       VIEW 2: COMPLETE SURGERY & CHECKUP COST ESTIMATOR MATRIX
+  ========================================================== -->
+  <section id="view-estimator" class="view-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Complete Surgery, Scan &amp; Checkup Cost Comparison Matrix</h2>
+          <p>Select any surgery or diagnostic checkup below to compare itemized prices across every performing hospital and diagnostic chain in Hyderabad.</p>
+        </div>
+        <div class="filter-group">
+          <select id="estimatorProcSelect" class="role-select large-select" onchange="renderEstimatorMatrix()"></select>
+        </div>
+      </div>
+
+      <div id="estimatorDetailHeader" class="estimator-banner"></div>
+
+      <div class="matrix-table-wrap">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Provider Name &amp; Area</th>
+              <th>Live Distance</th>
+              <th>Primary Fee / Scan</th>
+              <th>Anesthesia / Lab Reporting</th>
+              <th>Room / Consumables</th>
+              <th>Total Package Estimate</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="estimatorTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 3: ALL 48 HYDERABAD HOSPITALS & DIAGNOSTIC CHAINS
+  ========================================================== -->
+  <section id="view-hospitals" class="view-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>All 48 Verified Hospitals &amp; NABL Diagnostic Chains — Hyderabad</h2>
+          <p>Sorted automatically by proximity to your current location. Click "Directions" on any card to open turn-by-turn navigation.</p>
+        </div>
+        <div class="filter-group">
+          <input type="text" id="hospDirSearch" maxlength="60" class="role-select" placeholder="Search Cura, Rishitha, Olive, Germanten, Apollo..." oninput="renderFullHospitalDirectory()" />
+          <select id="hospTypeFilter" class="role-select" onchange="renderFullHospitalDirectory()">
+            <option value="ALL">All Providers (48)</option>
+            <option value="Hospital">Hospitals Only (41)</option>
+            <option value="Diagnostic">Diagnostic Chains Only (7)</option>
+          </select>
+          <select id="hospSpecialtyFilter" class="role-select" onchange="renderFullHospitalDirectory()">
+            <option value="ALL">All Specialties</option>
+            <option value="Cardiology">Cardiology &amp; Heart</option>
+            <option value="Orthopedics">Orthopedics &amp; Joints</option>
+            <option value="Gastroenterology">Gastroenterology</option>
+            <option value="Neurology">Neurology &amp; Spine</option>
+            <option value="Oncology">Oncology (Cancer)</option>
+            <option value="Radiology & Diagnostics">Radiology &amp; Lab Diagnostics</option>
+            <option value="Maternity">Maternity &amp; Pediatrics</option>
+            <option value="Ophthalmology">Ophthalmology (Eye)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="fullHospitalGrid" class="top3-grid"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 4: VERIFIED DOCTOR DIRECTORY
+  ========================================================== -->
+  <section id="view-doctors" class="view-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Verified Specialist Doctors &amp; Chief Radiologists</h2>
+          <p>Cross-verified with Telangana State Medical Council (TSMC / NMC) registration numbers, transparent consultation fees, and instant UPI/Cashless slot booking.</p>
+        </div>
+        <div class="filter-group">
+          <input type="text" id="docSearchInput" maxlength="60" class="role-select" placeholder="Search doctor, specialty, or hospital..." oninput="renderDoctorsDirectory()" />
+          <select id="docSpecFilter" class="role-select" onchange="renderDoctorsDirectory()">
+            <option value="ALL">All Specialties</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Orthopedics">Orthopedics</option>
+            <option value="Gastroenterology">Gastroenterology</option>
+            <option value="Radiology & Diagnostics">Radiology &amp; Diagnostics</option>
+            <option value="Ophthalmology">Ophthalmology</option>
+            <option value="Obstetrics & Gynecology">Obstetrics &amp; Gynecology</option>
+            <option value="Neurology">Neurology</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="doctorsGrid" class="top3-grid"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 5: PERSONAL DIGITAL HEALTH RECORDS VAULT
+  ========================================================== -->
+  <section id="view-records" class="view-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Health Locker</h2>
+          <p>Your certificates and personal health file, encrypted in your browser before they are saved. Only your passphrase can open them.</p>
+        </div>
+      </div>
+
+      <div id="lockerSecure" class="locker-secure" aria-live="polite"></div>
+
+      <div class="locker-subhead">
+        <div>
+          <h3>Hospital &amp; lab reports</h3>
+          <p>Reports from Vijaya Diagnostics, Lucid, Olive, Apollo, AIG and KIMS in one timeline, with doctor access you control.</p>
+        </div>
+        <button class="btn-primary" onclick="openUploadRecordModal()">+ Upload report</button>
+      </div>
+
+      <div class="vault-grid">
+        <aside class="vault-sidebar">
+          <div class="vault-tag">Patient profile</div>
+          <h3 class="vault-title">HealthX Health Locker</h3>
+          <div class="mono vault-abha">ABHA ID: 91-4829-7731-0492</div>
+
+          <div class="vault-summary-card">
+            <div class="vault-row"><span>Blood Group:</span><strong>O Positive</strong></div>
+            <div class="vault-row"><span>Linked Providers:</span><strong>6 Hospitals &amp; Labs</strong></div>
+            <div class="vault-row"><span>Authorized Shares:</span><strong id="activeShareCount" class="emerald-text">3 Active</strong></div>
+          </div>
+
+          <div class="vault-filter-heading">Filter by Document Category</div>
+          <div class="vault-filter-list">
+            <button class="btn-secondary full-left" onclick="filterRecords('ALL')">All Medical Documents</button>
+            <button class="btn-secondary full-left" onclick="filterRecords('Lab Report')">Diagnostic &amp; Blood Reports</button>
+            <button class="btn-secondary full-left" onclick="filterRecords('Radiology Scan')">MRI / CT / Ultrasound Scans</button>
+            <button class="btn-secondary full-left" onclick="filterRecords('Discharge Summary')">Surgery &amp; Discharge Summaries</button>
+            <button class="btn-secondary full-left" onclick="filterRecords('Prescription')">Doctor Prescriptions</button>
+          </div>
+        </aside>
+
+        <div>
+          <div id="recordsListContainer"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 6: MEDGRID FAMILY HEALTH GRAPH FULL PAGE
+  ========================================================== -->
+  <section id="view-family" class="view-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>👨‍👩‍👧‍👦 HealthX Family Health Graph</h2>
+          <p>One family, one connected health-management dashboard — manage children's appointments, organize elderly relatives' medical records, and track caregiver medication schedules.</p>
+        </div>
+        <div class="filter-group">
+          <button class="btn-primary" onclick="openAddFamilyMemberModal()">+ Add Family Member</button>
+        </div>
+      </div>
+
+      <div id="familyMembersGrid" class="family-nodes-grid"></div>
+      <div id="familyActiveDetailPanel" class="results-panel" style="margin-top:24px;"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 7: TRANSACTIONS, PAYMENTS & RECEIPTS LEDGER
+  ========================================================== -->
+  <section id="view-transactions" class="view-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>My Transactions, UPI Payments &amp; Insurance Pre-Auth Ledger</h2>
+          <p>Track all booked consultations, diagnostic scan payments, and cashless surgery estimate locks with downloadable receipts.</p>
+        </div>
+        <div class="filter-group">
+          <button class="btn-secondary" onclick="switchView('home')">+ New Booking / Payment</button>
+        </div>
+      </div>
+
+      <div class="txn-kpi-row" id="txnSummaryKpis"></div>
+
+      <div id="transactionsListContainer"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 8: SIDE-BY-SIDE HOSPITAL & DIAGNOSTIC COMPARISON
+  ========================================================== -->
+  <section id="view-compare" class="view-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Side-by-Side Provider Comparison</h2>
+          <p>Compare hospitals and diagnostic chains across accreditations, live distance from you, surgery packages, and scan rates.</p>
+        </div>
+        <button class="btn-secondary" onclick="switchView('hospitals')">+ Add / Change Providers</button>
+      </div>
+
+      <div id="comparisonMatrixContainer" class="matrix-table-wrap"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 9: AUTHENTICATED ROLE PORTAL (ADMIN / DOCTOR)
+  ========================================================== -->
+  <section id="view-admin" class="view-section">
+    <div class="container">
+      <div id="rolePortalContainer"></div>
+    </div>
+  </section>
+
+  <!-- Floating Compare Tray -->
+  <div id="compareFloatingBar" class="compare-bar">
+    <span id="compareBarText">3 Providers Selected for Comparison</span>
+    <button class="btn-primary small-btn" onclick="switchView('compare')">Compare Side-by-Side →</button>
+  </div>
+
+  <!-- Mobile bottom navigation -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <button class="mob-nav-item active" data-view="home" onclick="switchView('home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="mob-nav-item" data-view="hospitals" onclick="switchView('hospitals')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 7v6M9 10h6M9 17h6"/></svg>
+      <span>Hospitals</span>
+    </button>
+    <button class="mob-nav-item" data-view="estimator" onclick="switchView('estimator')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-3-2-3 2-3-2-3 2V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6"/></svg>
+      <span>Costs</span>
+    </button>
+    <button class="mob-nav-item" data-view="family" onclick="switchView('family')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg>
+      <span>Family</span>
+    </button>
+    <button class="mob-nav-item" data-view="records" onclick="switchView('records')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <span>Locker</span>
+    </button>
+    <button class="mob-nav-item" id="mobMoreBtn" onclick="openMoreSheet()" aria-haspopup="dialog">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>
+      <span>More</span>
+    </button>
+  </nav>
+
+  <!-- Mobile "More" sheet -->
+  <div id="moreSheet" class="sheet-backdrop" onclick="if(event.target===this) closeMoreSheet()">
+    <div class="sheet" role="dialog" aria-label="More sections">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">More</div>
+      <button class="sheet-item" onclick="goFromSheet('doctors')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/></svg><span>Verified doctors</span></button>
+      <button class="sheet-item" onclick="goFromSheet('transactions')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Transactions</span></button>
+      <button class="sheet-item" onclick="goFromSheet('compare')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M17 4v16M3 8l4-4 4 4M13 16l4 4 4-4"/></svg><span>Compare providers</span></button>
+    </div>
+  </div>
+
+  <!-- Universal Modal -->
+  <div id="appModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box" id="appModalContent"></div>
+  </div>
+
+  <footer>
+    <div class="container footer-flex">
+      <div>
+        <strong class="footer-brand">HealthX — "Transparent Healthcare, Right Around the Corner."</strong>
+        <p class="footer-note">Published surgery and diagnostic checkup rates are verified package estimates for standard clinical pathways, not guaranteed final bills. Optional imported implants, contrast dyes, or extended ICU stays are disclosed transparently before admission.</p>
+      </div>
+      <div class="footer-right">
+        <div><strong>Hyderabad Nodal Grid</strong> • NABH / JCI / NABL / TSMC Verified</div>
+        <div class="footer-sub">Zero-Trust Patient Record Privacy • XSS Sanitized &amp; Role-Protected</div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #64748B;">
+      <div>
+        &copy; 2026 <strong>HealthX</strong>. All Rights Reserved. | <em>Transparent Healthcare, Right Around the Corner.</em>
+      </div>
+      <div>
+        Built for Hyderabad Healthcare Discovery • Privacy Policy • Terms of Clinical Estimate Use
+      </div>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

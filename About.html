@@ -1,0 +1,276 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About HealthX</title>
+    <link rel="stylesheet" href="./styles.css">
+
+    <style>
+        .about-hero {
+            text-align: center;
+            padding: 55px 20px 35px;
+        }
+
+        .about-hero h1 {
+            font-size: clamp(30px, 5vw, 46px);
+            margin-bottom: 12px;
+        }
+
+        .about-hero p {
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .about-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+
+        .about-section h2 {
+            margin-bottom: 16px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .about-card {
+            padding: 22px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .about-card h3 {
+            margin-top: 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            margin-top: 22px;
+        }
+
+        .team-card {
+            text-align: center;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .team-photo {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .team-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .team-details {
+            margin-top: 25px;
+        }
+
+        .team-details h3 {
+            margin-bottom: 6px;
+        }
+
+        .team-details p {
+            margin-top: 0;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 600px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="nav-links" aria-label="Primary Navigation">
+            <a href="./index.html" class="nav-link">Home</a>
+            <a href="./categories.html" class="nav-link">Categories</a>
+            <a href="./bloodbank.html" class="nav-link">Blood Bank</a>
+            <a href="./costs.html" class="nav-link">Cost Estimator</a>
+            <a href="./locker.html" class="nav-link">Records</a>
+            <a href="./feedback.html" class="nav-link">Feedback</a>
+            <a href="./fitness.html" class="nav-link">Fitness Tracker</a>
+            <a href="./about.html" class="nav-link active">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="about-hero">
+            <h1>About HealthX</h1>
+            <p>
+                Making healthcare easier to discover, understand, and access.
+                HealthX brings hospital discovery, doctor information,
+                surgery cost comparison, and digital health records together
+                in one convenient platform.
+            </p>
+        </section>
+
+        <section class="about-section">
+            <h2>Who We Are</h2>
+
+            <div class="about-card">
+                <p>
+                    HealthX is a healthcare platform concept designed to help
+                    people make more informed healthcare decisions. Our goal
+                    is to make essential healthcare information easier to find
+                    and help users keep their medical history organised.
+                </p>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <h2>Our Mission, Vision &amp; Goal</h2>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Our Mission</h3>
+                    <p>
+                        Make healthcare information easier for everyone
+                        to access and understand.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <h3>Our Vision</h3>
+                    <p>
+                        Create a more connected healthcare experience
+                        for patients and healthcare providers.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <h3>Our Goal</h3>
+                    <p>
+                        Help users discover hospitals, compare available
+                        cost information, and organise medical records.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <h2>What HealthX Offers</h2>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Hospital Discovery</h3>
+                    <p>
+                        Explore hospitals and available healthcare
+                        information in one place.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <h3>Doctor Search</h3>
+                    <p>
+                        Find doctor information and specialisations.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <h3>Surgery Cost Comparison</h3>
+                    <p>
+                        Compare available procedure cost information
+                        to support informed decisions.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <h3>Digital Health Records</h3>
+                    <p>
+                        Keep important medical reports and health
+                        history organised.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <h2>Our Team &amp; Hospital Research</h2>
+
+            <div class="about-card">
+                <p>
+                    Our team visited hospitals and interacted with doctors
+                    and patients to understand real-world healthcare
+                    challenges. We listened to their experiences, gathered
+                    valuable insights, and reviewed the difficulties people
+                    face while accessing healthcare services. This groundwork
+                    helped us identify opportunities for improvement and
+                    shape HealthX into a concept focused on making healthcare
+                    information more accessible, organised, and convenient.
+                </p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-photo">
+                        <img
+                            src="./images/member1.jpg.jpeg"
+                            alt="HealthX team photo 1">
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-photo">
+                        <img
+                            src="./images/member2.jpg.jpeg"
+                            alt="HealthX team photo 2">
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-photo">
+                        <img
+                            src="./images/member3.jpg.jpeg"
+                            alt="HealthX team photo 3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-card team-details">
+                <h3>Team Lead</h3>
+                <p>Mohammed Minhaal</p>
+
+                <h3>Research Team</h3>
+                <p>Ahmed Mufassir Sami, Yousuf Abdul Majid</p>
+
+                <h3>Groundwork</h3>
+                <p>Zaheer Uddin</p>
+
+                <h3>Technical Team</h3>
+                <p>Syed Zaahak Hussain, Mohammed Minhaal</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 HealthX. Healthcare information, made easier.</p>
+    </footer>
+
+    <script src="./app.js"></script>
+</body>
+</html>
+```

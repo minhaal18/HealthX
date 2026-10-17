@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthX | Surgery & Scan Cost Estimator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- GPS AUTO-CONNECT PROMPT BAR -->
+  <div class="gps-prompt-banner">
+    <div class="gps-prompt-inner">
+      <div id="gpsBannerText">
+        <span class="gps-status-dot"></span><strong>GPS Not Connected:</strong> Connect Live GPS to auto-detect the nearest hospitals and diagnostic labs around you.
+      </div>
+      <button id="gpsConnectBtn" class="btn-outline" style="padding:5px 12px;font-size:12px;" onclick="connectLiveGPS(false)">
+        📡 Connect Live GPS Now
+      </button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-top">
+        <a href="./index.html" class="brand">
+          <span class="brand-mark">HX</span>
+          <span>
+            <span class="brand-title">HealthX</span>
+            <span class="brand-sub">Transparent Healthcare, Right Around the Corner.</span>
+          </span>
+        </a>
+
+        <div class="header-controls">
+          <!-- Location Auto-Correct Input -->
+          <div class="location-box" title="Type your Hyderabad area (auto-completes)">
+            <span>📍</span>
+            <input id="headerLocationInput" type="text" placeholder="Type area (e.g. Attapur, Mehdipatnam)" oninput="handleLocationTyping(this.value)" onfocus="handleLocationTyping(this.value)" />
+            <div id="locSuggestionsBox" class="loc-suggestions"></div>
+          </div>
+
+          <!-- ONLY RED FEATURE: EMERGENCY AMBULANCE -->
+          <button type="button" class="btn-ambulance" onclick="openAmbulanceModal()">
+            🚑 Emergency Ambulance
+          </button>
+
+          <!-- Top-Right Compact Login / Guest / Aadhaar Menu -->
+          <div class="profile-menu-wrap">
+            <button type="button" class="profile-trigger-btn" onclick="toggleProfileDropdown()">
+              <span id="profileAvatarMini" class="profile-avatar-mini">GU</span>
+              <span id="profileBtnLabel">Guest User</span>
+              <span>▾</span>
+            </button>
+            <div id="profileDropdown" class="profile-dropdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./categories.html" class="nav-link">Categories </a>
+        <a href="./bloodbank.html" class="nav-link">Blood Bank</a>
+        <a href="./costs.html" class="nav-link active">Cost Estimator</a>
+        <a href="./locker.html" class="nav-link">Records</a>
+        <a href="./feedback.html" class="nav-link">Feedback</a>
+        <a href="./fitness.html" class="nav-link">Fitness Tracker</a>
+     <a href="./about.html" class="nav-link" data-i18n="navAbout">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- CLEAN HERO FOR COST TRANSPARENCY -->
+    <section class="hero-clean">
+      <span class="hero-kicker">UPFRONT PRICE TRANSPARENCY MATRIX</span>
+      <h1>Compare Itemized Surgery &amp; Diagnostic Scan Costs</h1>
+      <p>Select any planned operation, MRI, CT scan, or health checkup below to see side-by-side package breakdowns across verified hospitals and NABL diagnostic chains near <strong class="active-zone-label">Himayath Sagar</strong>.</p>
+
+      <div class="symptom-filter-bar" style="grid-template-columns: 1.6fr 1fr;">
+        <div>
+          <label style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--navy-muted);display:block;margin-bottom:4px;">Select Surgery, Scan, or Checkup</label>
+          <select id="costProcSelect" class="select-std" onchange="renderCostEstimatorPage()"></select>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--navy-muted);display:block;margin-bottom:4px;">Inpatient Room Category</label>
+          <select id="costRoomTierSelect" class="select-std" onchange="updateCostRoomTier(this.value)">
+            <option value="1">General Ward (1.0x Base Package)</option>
+            <option value="1.22">Twin Sharing AC (1.22x)</option>
+            <option value="1.48">Single Private AC Room (1.48x)</option>
+            <option value="1.85">Deluxe Suite (1.85x)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- PACKAGE INCLUSIONS & EXCLUSIONS BANNER -->
+    <div class="recommendation-banner">
+      <div>
+        <span class="badge-navy" style="margin-bottom:6px;">PACKAGE CLARITY GUARANTEE</span>
+        <h3>Standard Inclusions &amp; Disclosed Exclusions</h3>
+        <p><strong>Included:</strong> Surgeon/Radiologist Fee, Standard OT/Scanner Charges, Standard Consumables &amp; Nursing. &nbsp;|&nbsp; <strong>Excluded:</strong> Extended ICU stay beyond package days or imported custom implants.</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;color:#CBD5E1;">Sorted By</div>
+        <strong style="font-size:15px;color:#FFFFFF;">📍 Closest to <span class="active-zone-label">Himayath Sagar</span></strong>
+      </div>
+    </div>
+
+    <!-- SIDE-BY-SIDE COST TABLE -->
+    <section>
+      <div class="section-header">
+        <div>
+          <h2>Hospital &amp; NABL Lab Price Breakdown</h2>
+          <p>Standalone NABL diagnostic centers charge ~30%–40% less than hospital OPDs for identical MRI, CT, and blood tests.</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="clean-table">
+          <thead>
+            <tr>
+              <th>Hospital / Diagnostic Center</th>
+              <th>Live Distance</th>
+              <th>Primary Procedure / Scan</th>
+              <th>Anesthesia / Reporting</th>
+              <th>Room &amp; Consumables</th>
+              <th>Total Package Estimate</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="costTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL & TOAST -->
+  <div id="appModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div id="appModalContent" class="modal-box"></div>
+  </div>
+  <div id="toastBox" class="toast"></div>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>HealthX</strong> — Upfront Cost Transparency Matrix.</div>
+      <div>UN SDG-3 Aligned • Hyderabad Healthcare Network</div>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+  <script>
+    // Optional Room Tier Multiplier Hook for costs.html
+    function updateCostRoomTier(multVal) {
+      const mult = parseFloat(multVal) || 1;
+      const sel = document.getElementById("costProcSelect");
+      const tbody = document.getElementById("costTableBody");
+      if (!sel || !tbody) return;
+      const proc = PROCEDURES.find(p => p.id === sel.value) || PROCEDURES[0];
+      const providers = getProvidersSorted().filter(p => !(proc.category === "Surgery" && p.type === "Diagnostic"));
+      tbody.innerHTML = providers.map(p => {
+        const appliedMult = proc.category === "Surgery" ? mult : 1;
+        const total = Math.round(proc.basePrice * p.priceMultiplier * appliedMult);
+        return `
+          <tr>
+            <td>
+              <strong>${escapeHTML(p.name)}</strong>
+              <div style="font-size:12px;color:var(--navy-muted);">${escapeHTML(p.zone)} • ★ ${p.rating}</div>
+            </td>
+            <td class="mono">📍 ${p.distanceKm} km (~${p.driveMins}m)</td>
+            <td class="mono">${formatINR(total * 0.55)}</td>
+            <td class="mono">${formatINR(total * 0.25)}</td>
+            <td class="mono">${formatINR(total * 0.20)}</td>
+            <td class="mono" style="font-weight:800;font-size:15px;">${formatINR(total)}</td>
+            <td>
+              <button class="btn-navy" style="padding:7px 14px;font-size:12px;" onclick="showToast('Locked estimate of ${formatINR(total)} at ${escapeHTML(p.name)}')">
+                Lock Estimate
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+  </script>
+</body>
+</html>

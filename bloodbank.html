@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthX | Blood Bank & Transfusion Finder Near You</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <div class="gps-prompt-banner">
+    <div class="gps-prompt-inner">
+      <div id="gpsBannerText"></div>
+      <button id="gpsConnectBtn" class="btn-outline" style="padding:5px 12px;font-size:12px;" onclick="connectLiveGPS(false)">📡 Connect Live GPS</button>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-top">
+        <a href="./index.html" class="brand">
+          <span class="brand-mark">HX</span>
+          <span>
+            <span class="brand-title">HealthX</span>
+            <span class="brand-sub">Transparent Healthcare, Right Around the Corner.</span>
+          </span>
+        </a>
+        <div class="header-controls">
+          <div class="location-box">
+            <span>📍</span>
+            <input id="headerLocationInput" type="text" placeholder="Type area..." oninput="handleLocationTyping(this.value)" onfocus="handleLocationTyping(this.value)" />
+            <div id="locSuggestionsBox" class="loc-suggestions"></div>
+          </div>
+          <button type="button" class="btn-ambulance" onclick="openAmbulanceModal()">🚑 Emergency Ambulance</button>
+          <div class="profile-menu-wrap">
+            <button type="button" class="profile-trigger-btn" onclick="toggleProfileDropdown()">
+              <span id="profileAvatarMini" class="profile-avatar-mini">GU</span>
+              <span id="profileBtnLabel">Guest User</span>
+              <span>▾</span>
+            </button>
+            <div id="profileDropdown" class="profile-dropdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./categories.html" class="nav-link">Categories</a>
+        <a href="./bloodbank.html" class="nav-link active">Blood Bank</a>
+        <a href="./costs.html" class="nav-link">Cost Estimator</a>
+        <a href="./locker.html" class="nav-link">Records</a>
+        <a href="./feedback.html" class="nav-link">Feedback</a>
+        <a href="./fitness.html" class="nav-link">Fitness Tracker</a>
+        <a href="./about.html" class="nav-link" data-i18n="navAbout">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero-clean">
+      <span class="hero-kicker">24x7 BLOOD TRANSFUSION &amp; PLATELET FINDER</span>
+      <h1>Live Blood Bank Stock Near <span class="active-zone-label">Himayath Sagar</span></h1>
+      <p>Filter by blood group below to check live Packed RBC, Plasma, and Single-Donor Platelet (Dengue/Surgery) units across nearby Hyderabad hospital blood banks.</p>
+
+      <div class="symptom-chips">
+        <button class="sym-chip bg-chip active" onclick="selectBloodGroupFilter('ALL', this)">All Blood Groups</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('O+', this)">O+ Positive</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('O-', this)">O- Negative (Universal)</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('A+', this)">A+ Positive</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('A-', this)">A- Negative</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('B+', this)">B+ Positive</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('B-', this)">B- Negative</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('AB+', this)">AB+ Positive</button>
+        <button class="sym-chip bg-chip" onclick="selectBloodGroupFilter('AB-', this)">AB- Negative</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header">
+        <div>
+          <h2>Nearest Licensed Blood Banks &amp; Transfusion Centers</h2>
+          <p>Sorted by proximity to your GPS or selected Hyderabad area.</p>
+        </div>
+      </div>
+      <div id="bloodBankGrid" class="grid-3"></div>
+    </section>
+  </main>
+
+  <div id="appModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div id="appModalContent" class="modal-box"></div>
+  </div>
+  <div id="toastBox" class="toast"></div>
+
+  <footer>
+    <div class="container"><strong>HealthX</strong> — 24x7 Hyderabad Blood Bank &amp; Transfusion Network.</div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

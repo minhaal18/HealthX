@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthX | Patient & Doctor Feedback</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- GPS AUTO-CONNECT PROMPT BAR -->
+  <div class="gps-prompt-banner">
+    <div class="gps-prompt-inner">
+      <div id="gpsBannerText">
+        <span class="gps-status-dot"></span><strong>GPS Not Connected:</strong> Connect Live GPS to auto-detect the nearest doctors and hospitals around you.
+      </div>
+      <button id="gpsConnectBtn" class="btn-outline" style="padding:5px 12px;font-size:12px;" onclick="connectLiveGPS(false)">
+        📡 Connect Live GPS Now
+      </button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-top">
+        <a href="./index.html" class="brand">
+          <span class="brand-mark">HX</span>
+          <span>
+            <span class="brand-title">HealthX</span>
+            <span class="brand-sub">Transparent Healthcare, Right Around the Corner.</span>
+          </span>
+        </a>
+
+        <div class="header-controls">
+          <!-- Location Auto-Correct Input -->
+          <div class="location-box" title="Type your Hyderabad area (auto-completes)">
+            <span>📍</span>
+            <input id="headerLocationInput" type="text" placeholder="Type area (e.g. Attapur, Mehdipatnam)" oninput="handleLocationTyping(this.value)" onfocus="handleLocationTyping(this.value)" />
+            <div id="locSuggestionsBox" class="loc-suggestions"></div>
+          </div>
+
+          <!-- ONLY RED FEATURE: EMERGENCY AMBULANCE -->
+          <button type="button" class="btn-ambulance" onclick="openAmbulanceModal()">
+            🚑 Emergency Ambulance
+          </button>
+
+          <!-- Top-Right Compact Login / Guest / Aadhaar Menu -->
+          <div class="profile-menu-wrap">
+            <button type="button" class="profile-trigger-btn" onclick="toggleProfileDropdown()">
+              <span id="profileAvatarMini" class="profile-avatar-mini">GU</span>
+              <span id="profileBtnLabel">Guest User</span>
+              <span>▾</span>
+            </button>
+            <div id="profileDropdown" class="profile-dropdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="./index.html" class="nav-link">Home </a>
+        <a href="./categories.html" class="nav-link">Categories</a>
+        <a href="./bloodbank.html" class="nav-link">Blood Bank</a>
+        <a href="./costs.html" class="nav-link">Cost Estimator</a>
+        <a href="./locker.html" class="nav-link">Records</a>
+        <a href="./feedback.html" class="nav-link active">Feedback</a>
+        <a href="./fitness.html" class="nav-link">Fitness Tracker</a>
+     <a href="./about.html" class="nav-link" data-i18n="navAbout">About</a>
+      
+
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero-clean">
+      <span class="hero-kicker">COMMUNITY &amp; CLINICAL VALIDATION</span>
+      <h1>Patient, Attendant &amp; Doctor Feedback</h1>
+      <p>Log real field-validation responses from hospital visits across Hyderabad or review verified feedback on billing clarity, report management, and diagnostic costs.</p>
+    </section>
+
+    <div class="grid-2" style="margin-top:28px;align-items:start;">
+      <!-- LEFT COLUMN: SUBMIT FEEDBACK FORM -->
+      <section class="card">
+        <span class="badge-navy solid" style="width:fit-content;margin-bottom:8px;">SUBMIT NEW FEEDBACK</span>
+        <h2 style="font-size:21px;margin-bottom:6px;">Share Your Experience</h2>
+        <p style="font-size:13px;color:var(--navy-muted);margin-bottom:16px;">Entries are saved immediately and displayed in the live validation feed.</p>
+
+        <form onsubmit="submitFeedbackForm(event)" style="display:grid;gap:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Your Name</label>
+            <input id="fbName" class="input-std" placeholder="e.g. Syed Zaahak / Dr. Ramesh" required />
+          </div>
+
+          <div class="grid-2" style="gap:10px;">
+            <div>
+              <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Respondent Role</label>
+              <select id="fbRole" class="select-std">
+                <option value="Patient / Family">Patient / Family Attendant</option>
+                <option value="Consultant Doctor">Doctor / Medical Staff</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Rating</label>
+              <select id="fbRating" class="select-std">
+                <option value="5 / 5">★★★★★ (5 / 5)</option>
+                <option value="4 / 5">★★★★☆ (4 / 5)</option>
+                <option value="3 / 5">★★★☆☆ (3 / 5)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Hospital / Diagnostic Lab Visited</label>
+            <input id="fbHosp" class="input-std" placeholder="e.g. Olive Hospitals / Vijaya Diagnostics / Germanten" required />
+          </div>
+
+          <div>
+            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Feedback on Billing Clarity, Reports, or Care</label>
+            <textarea id="fbText" class="input-std" rows="4" placeholder="Write what stood out about price clarity, lab savings, or the digital locker..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn-navy">Publish Verified Feedback</button>
+        </form>
+      </section>
+
+      <!-- RIGHT COLUMN: RECENT FEEDBACK ENTRIES -->
+      <section>
+        <div class="section-header" style="margin-top:0;">
+          <div>
+            <h2>Recent Patient &amp; Doctor Reviews</h2>
+            <p>Verified field insights from Hyderabad hospitals and diagnostic centers.</p>
+          </div>
+        </div>
+        <div id="feedbackEntriesList" style="display:grid;gap:14px;"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL & TOAST -->
+  <div id="appModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div id="appModalContent" class="modal-box"></div>
+  </div>
+  <div id="toastBox" class="toast"></div>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>HealthX</strong> — Community &amp; Clinical Feedback Portal.</div>
+      <div>UN SDG-3 Aligned • Hyderabad Healthcare Network</div>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

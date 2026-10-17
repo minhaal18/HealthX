@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthX | Hyderabad's All-In-One Health App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- GPS AUTO-CONNECT PROMPT BAR -->
+  <div class="gps-prompt-banner">
+    <div class="gps-prompt-inner">
+      <div id="gpsBannerText">
+        <span class="gps-status-dot"></span><strong>GPS Not Connected:</strong> Connect Live GPS to auto-detect the nearest doctors and hospitals around you.
+      </div>
+      <button id="gpsConnectBtn" class="btn-outline" style="padding:5px 12px;font-size:12px;" onclick="connectLiveGPS(false)">
+        📡 Connect Live GPS Now
+      </button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-top">
+        <a href="./index.html" class="brand">
+<span class="brand-mark">HX</span>
+          <span>
+            <span class="brand-title">HealthX</span>
+            <span class="brand-sub">Transparent Healthcare, Right Around the Corner.</span>
+          </span>
+        </a>
+
+        <div class="header-controls">
+          <!-- Compact Language Switcher (EN | हिं | اردو | తె) -->
+          <div id="headerLangSwitcher" class="lang-mini-pill" role="group" aria-label="Language Switcher">
+            <button type="button" class="lang-mini-btn active" data-lang="en" onclick="setSiteLanguage('en')" title="English">EN</button>
+            <button type="button" class="lang-mini-btn" data-lang="hi" onclick="setSiteLanguage('hi')" title="Hindi">हिं</button>
+            <button type="button" class="lang-mini-btn" data-lang="ur" onclick="setSiteLanguage('ur')" title="Urdu">اردو</button>
+            <button type="button" class="lang-mini-btn" data-lang="te" onclick="setSiteLanguage('te')" title="Telugu">తె</button>
+          </div>
+
+          <!-- Location Auto-Correct Input -->
+          <div class="location-box" title="Type your Hyderabad area (auto-completes)">
+            <span>📍</span>
+            <input id="headerLocationInput" type="text" placeholder="Type area (e.g. Attapur, Mehdipatnam)" oninput="handleLocationTyping(this.value)" onfocus="handleLocationTyping(this.value)" />
+            <div id="locSuggestionsBox" class="loc-suggestions"></div>
+          </div>
+
+          <!-- ONLY RED FEATURE: EMERGENCY AMBULANCE -->
+          <button type="button" class="btn-ambulance" onclick="openAmbulanceModal()" data-i18n="ambulanceBtn">
+            🚑 Emergency Ambulance
+          </button>
+
+          <!-- Top-Right Compact Login / Guest / National ID Menu -->
+          <div class="profile-menu-wrap">
+            <button type="button" class="profile-trigger-btn" onclick="toggleProfileDropdown()">
+              <span id="profileAvatarMini" class="profile-avatar-mini">SZ</span>
+              <span id="profileBtnLabel">User</span>
+              <span>▾</span>
+            </button>
+            <div id="profileDropdown" class="profile-dropdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="./index.html" class="nav-link active" data-i18n="navHome">Home</a>
+        <a href="./categories.html" class="nav-link" data-i18n="navCategories">Categories</a>
+        <a href="./bloodbank.html" class="nav-link" data-i18n="navBlood">Blood Bank</a>
+        <a href="./costs.html" class="nav-link" data-i18n="navCosts">Cost Estimator</a>
+        <a href="./locker.html" class="nav-link" data-i18n="navRecords">Records</a>
+        <a href="./feedback.html" class="nav-link" data-i18n="navFeedback">Feedback</a>
+       <a href="./fitness.html" class="nav-link">Fitness Tracker</a>
+     <a href="./about.html" class="nav-link" data-i18n="navAbout">About</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="container">
+
+
+
+
+    <!-- PC EXECUTIVE COMMAND CENTER -->
+    <section class="pc-command-hub" aria-label="HealthX PC Command Center">
+      <div class="pc-hub-banner">
+        <div class="pc-hub-brand">
+          <div class="pc-hub-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              <path d="M7 12h2l1.5-3 2.5 6 1.5-3H17" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="pc-hub-title">HealthX</div>
+            <div class="pc-hub-sub">Healthcare, made clearer.</div>
+          </div>
+        </div>
+
+        <div class="pc-hub-badges">
+          <span class="pc-pill-badge">📍 <span class="active-zone-label">Himayath Sagar (Lords College)</span></span>
+          <span class="pc-pill-badge">🗣️ EN • हिं • اردو • తె</span>
+        </div>
+      </div>
+
+      <!-- Main 2-Column PC Body -->
+      <div class="pc-hub-body">
+        <div>
+          <h1 class="pc-greeting-title" id="pcGreetingHeading" data-i18n="greetingTitle">Good morning, User.</h1>
+          <p class="pc-greeting-sub" data-i18n="greetingSub">What healthcare service or symptom help are you looking for today?</p>
+
+          <div class="pc-search-card">
+            <div class="pc-search-input-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F2537" stroke-width="2.2">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input
+                id="symptomInput"
+                type="text"
+                data-i18n-placeholder="symptomPlaceholder"
+                placeholder="Describe symptoms (e.g., anxiety, depression, chest pain, fever, knee pain) or search hospitals..."
+                oninput="renderSymptomMatches()"
+              />
+              <button type="button" id="clearSymptomBtn" class="pc-clear-btn" onclick="clearSymptomSearch()" title="Clear search">✕</button>
+              <button type="button" class="pc-mic-btn" onclick="startPCVoiceSearch()" title="Voice Search">
+                🎙️
+              </button>
+            </div>
+
+            <div class="pc-search-actions-row">
+              <select id="symptomCategorySelect" class="select-std" onchange="selectSymptomChip(this.value)">
+                <option value="ALL">Filter by Symptom: All Specialists &amp; Hospitals</option>
+                <option value="FEVER">High Fever / Dengue / Cough / Weakness</option>
+                <option value="HEART">Chest Pain / Breathlessness / High BP</option>
+                <option value="ORTHO">Knee Pain / Bone Fracture / Back Pain</option>
+                <option value="GASTRO">Stomach Pain / Gallstones / Kidney Stones</option>
+                <option value="NEURO">Severe Headache / Migraine / Spine</option>
+                <option value="PSYCH">Anxiety / Depression / Panic / Sleep / Stress (Psychiatry)</option>
+                <option value="GYNEC">Pregnancy / Maternity Care</option>
+                <option value="EYE">Blurry Vision / Cataract</option>
+              </select>
+
+              <a href="./costs.html" class="btn-navy" style="white-space:nowrap;" data-i18n="compareBtn">
+                Compare Healthcare Costs →
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Symptom Filter Chips (Now includes Mental Health / Psychiatric) -->
+          <div class="symptom-chips" style="margin-top:14px;">
+            <button class="sym-chip active" data-sym="ALL" data-i18n="chipAll" onclick="selectSymptomChip('ALL')">All Symptoms</button>
+            <button class="sym-chip" data-sym="FEVER" data-i18n="chipFever" onclick="selectSymptomChip('FEVER')">🤒 Fever / Dengue</button>
+            <button class="sym-chip" data-sym="HEART" data-i18n="chipHeart" onclick="selectSymptomChip('HEART')">🫀 Chest Pain / BP</button>
+            <button class="sym-chip" data-sym="ORTHO" data-i18n="chipOrtho" onclick="selectSymptomChip('ORTHO')">🦴 Bone / Joint</button>
+            <button class="sym-chip" data-sym="GASTRO" data-i18n="chipGastro" onclick="selectSymptomChip('GASTRO')">🩺 Stomach / Stones</button>
+            <button class="sym-chip" data-sym="NEURO" data-i18n="chipNeuro" onclick="selectSymptomChip('NEURO')">🧠 Headache / Nerve</button>
+            <button class="sym-chip" data-sym="PSYCH" data-i18n="chipPsych" onclick="selectSymptomChip('PSYCH')">🧘‍♀️ Mental Health / Anxiety</button>
+            <button class="sym-chip" data-sym="GYNEC" data-i18n="chipGynec" onclick="selectSymptomChip('GYNEC')">🤰 Maternity</button>
+            <button class="sym-chip" data-sym="EYE" data-i18n="chipEye" onclick="selectSymptomChip('EYE')">👁️ Eye / Cataract</button>
+          </div>
+        </div>
+
+        <!-- Right Column: 4 Crisp Navy & White Quick-Action Tiles -->
+        <div class="pc-tiles-grid">
+          <a href="./categories.html" class="pc-action-tile">
+            <div class="pc-tile-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 7v4M10 9h4M8 15h2M14 15h2M8 18h2M14 18h2"/>
+              </svg>
+            </div>
+            <div>
+              <div class="pc-tile-title" data-i18n="tileCatTitle">Disease Categories</div>
+              <div class="pc-tile-sub" data-i18n="tileCatSub">Explore equipped hospitals</div>
+            </div>
+          </a>
+
+          <a href="./costs.html" class="pc-action-tile">
+            <div class="pc-tile-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 3h12a1 1 0 0 1 1 1v17l-3-2-3 2-3-2-3 2V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6"/>
+              </svg>
+            </div>
+            <div>
+              <div class="pc-tile-title" data-i18n="tileCostTitle">Cost Estimator</div>
+              <div class="pc-tile-sub" data-i18n="tileCostSub">Understand expenses</div>
+            </div>
+          </a>
+
+          <a href="#recommendedDoctorsSection" class="pc-action-tile">
+            <div class="pc-tile-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 9h18M9 14l2 2 4-4"/>
+              </svg>
+            </div>
+            <div>
+              <div class="pc-tile-title" data-i18n="tileApptTitle">Appointments</div>
+              <div class="pc-tile-sub" data-i18n="tileApptSub">Manage doctor visits</div>
+            </div>
+          </a>
+
+          <a href="./locker.html" class="pc-action-tile featured">
+            <div class="pc-tile-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="pc-tile-title" data-i18n="tileRecTitle">Records</div>
+              <div class="pc-tile-sub" data-i18n="tileRecSub">Organize family records</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DYNAMIC SPECIALIST RECOMMENDATION BANNER -->
+    <div id="symptomRecommendationBanner" class="recommendation-banner"></div>
+
+    <!-- 1. RECOMMENDED DOCTORS TO VISIT -->
+    <section id="recommendedDoctorsSection">
+      <div class="section-header">
+        <div>
+          <h2><span data-i18n="secDocTitle">Recommended Doctors You Can Visit Near</span> <span class="active-zone-label">Himayath Sagar</span></h2>
+          <p data-i18n="secDocSub">Matched to your symptom and sorted by proximity to your location.</p>
+        </div>
+      </div>
+      <div id="homeSymptomDoctorsGrid" class="grid-3"></div>
+    </section>
+
+    <!-- 2. NEAREST HOSPITALS EQUIPPED FOR THIS SYMPTOM -->
+    <section>
+      <div class="section-header">
+        <div>
+          <h2 data-i18n="secHospTitle">Nearest Hospitals Equipped for Your Condition</h2>
+          <p data-i18n="secHospSub">Ranked by live distance from your GPS or selected Hyderabad neighborhood.</p>
+        </div>
+        <a href="./categories.html" class="btn-outline">Explore All Disease Categories →</a>
+      </div>
+      <div id="homeSymptomHospitalsGrid" class="grid-3"></div>
+    </section>
+  </main>
+
+  <!-- MODAL & TOAST -->
+  <div id="appModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div id="appModalContent" class="modal-box"></div>
+  </div>
+  <div id="toastBox" class="toast"></div>
+
+  <footer>
+    <div class="container">
+      <div>
+        <strong class="footer-brand">HealthX — "Transparent Healthcare, Right Around the Corner."</strong>
+        <p class="footer-note">Published surgery and diagnostic checkup rates are verified package estimates for standard clinical pathways, not guaranteed final bills. Optional imported implants, contrast dyes, or extended ICU stays are disclosed transparently before admission.</p>
+      </div>
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #64748B;">
+        <div>
+          &copy; 2026 <strong>HealthX</strong>. All Rights Reserved. | <em>Transparent Healthcare, Right Around the Corner.</em>
+        </div>
+        <div>
+          Built for Hyderabad Healthcare Discovery • 24x7 Tele-MANAS Mental Health Helpline: 14416
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+  <script>
+    function startPCVoiceSearch() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        document.getElementById("symptomInput").value = "anxiety";
+        renderSymptomMatches();
+        showToast("Voice simulated: Matching specialists for 'anxiety'");
+        return;
+      }
+      const rec = new SpeechRec();
+      const langMap = { en: "en-IN", hi: "hi-IN", ur: "ur-IN", te: "te-IN" };
+      rec.lang = langMap[currentLang] || "en-IN";
+      showToast("🎙️ Listening... Speak your symptom in English, Hindi, Urdu, or Telugu.");
+      rec.onresult = e => {
+        const text = e.results[0][0].transcript;
+        document.getElementById("symptomInput").value = text;
+        renderSymptomMatches();
+        showToast(`🎙️ Searching for: "${text}"`);
+      };
+      rec.start();
+    }
+  </script>
+</body>
+</html>

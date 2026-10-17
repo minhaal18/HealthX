@@ -1,0 +1,388 @@
+Here is your entire `fitness.html` code, with only the theme colors changed to match HealthX's navy-blue, dark background, white text, and blue accents. All your existing features and JavaScript functionality are preserved.
+
+Replace your complete `fitness.html` with this code.
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness Tracker | HealthX</title>
+<link rel="stylesheet" href="./styles.css">
+
+<style>
+.fitness-page{max-width:1100px;margin:30px auto;padding:20px}
+.fitness-hero{padding:35px 20px;border-radius:20px;text-align:center;background:linear-gradient(135deg,#0b1220,#172642,#22385d);color:#fff;margin-bottom:25px;border:1px solid rgba(255,255,255,.10)}
+.fitness-hero h1{margin:0 0 10px;font-size:clamp(28px,5vw,40px)}
+.fitness-hero p{margin:0}
+.fitness-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:25px}
+.fitness-card,.fitness-section{padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);box-shadow:0 8px 24px rgba(0,0,0,.10)}
+.fitness-icon{font-size:28px}
+.fitness-card h3{margin:8px 0}
+.fitness-value{font-size:30px;font-weight:700;margin:10px 0;color:#fff}
+.fitness-muted,.fitness-note{font-size:13px;opacity:.75;line-height:1.6}
+.fitness-section{margin-bottom:22px}
+.fitness-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.fitness-field{display:flex;flex-direction:column;gap:7px}
+.fitness-field label{font-weight:600;font-size:14px}
+.fitness-field input{width:100%;box-sizing:border-box;padding:12px;border:1px solid rgba(255,255,255,.18);border-radius:9px;font:inherit;background:rgba(255,255,255,.04);color:inherit}
+.fitness-field input:focus{outline:2px solid #6e95d6;outline-offset:2px}
+.fitness-field input[type="date"]{color-scheme:dark}
+.fitness-btn{border:1px solid #304b76;border-radius:9px;padding:12px 18px;background:#243b63;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s}
+.fitness-btn:hover{background:#304e7d;border-color:#496a9e}
+.fitness-secondary{background:transparent;color:inherit;border:1px solid rgba(255,255,255,.22)}
+.fitness-secondary:hover{background:rgba(255,255,255,.07)}
+.fitness-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.fitness-progress{height:12px;background:rgba(255,255,255,.10);border-radius:20px;overflow:hidden;margin:12px 0}
+.fitness-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#5279b8,#91b5f2);border-radius:20px;transition:width .3s}
+.fitness-goal-row{margin:22px 0}
+.fitness-goal-heading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fitness-water{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.fitness-water-count{font-size:24px;font-weight:700}
+.fitness-message{font-size:14px}
+.fitness-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:end;gap:12px;height:190px;margin-top:20px}
+.fitness-day{display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;gap:8px;min-width:0}
+.fitness-bar-wrap{width:100%;height:145px;display:flex;align-items:end;justify-content:center}
+.fitness-bar{width:min(32px,80%);min-height:3px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#91b5f2,#42669f)}
+.fitness-day small{font-size:12px}
+@media(max-width:700px){.fitness-grid{grid-template-columns:1fr}.fitness-form{grid-template-columns:1fr}.fitness-page{padding:12px}.fitness-section{padding:18px}}
+</style>
+</head>
+
+<body>
+
+<nav class="nav-links" aria-label="Primary Navigation">
+<a href="./index.html" class="nav-link">Home</a>
+<a href="./categories.html" class="nav-link">Categories</a>
+<a href="./bloodbank.html" class="nav-link">Blood Bank</a>
+<a href="./costs.html" class="nav-link">Cost Estimator</a>
+<a href="./locker.html" class="nav-link">Records</a>
+<a href="./feedback.html" class="nav-link">Feedback</a>
+<a href="./about.html" class="nav-link">About</a>
+<a href="./fitness.html" class="nav-link active">Fitness Tracker</a>
+</nav>
+
+<main class="fitness-page">
+
+<section class="fitness-hero">
+<h1>HealthX Fitness</h1>
+<p>Small daily steps. Better long-term habits.</p>
+</section>
+
+<section class="fitness-grid">
+<div class="fitness-card">
+<div class="fitness-icon">👟</div>
+<h3>Today's Steps</h3>
+<div class="fitness-value" id="stepsValue">0</div>
+<div class="fitness-muted">steps completed</div>
+</div>
+<div class="fitness-card">
+<div class="fitness-icon">⏱️</div>
+<h3>Active Minutes</h3>
+<div class="fitness-value" id="minutesValue">0</div>
+<div class="fitness-muted">minutes of activity</div>
+</div>
+<div class="fitness-card">
+<div class="fitness-icon">🔥</div>
+<h3>Calories Burned</h3>
+<div class="fitness-value" id="caloriesValue">0</div>
+<div class="fitness-muted">estimated calories</div>
+</div>
+</section>
+
+<section class="fitness-section">
+<h2>📝 Record Your Activity</h2>
+<p class="fitness-note">Enter your activity manually. Your phone is not automatically measuring these values.</p>
+<form id="activityForm">
+<div class="fitness-form">
+<div class="fitness-field">
+<label for="stepsInput">Steps taken</label>
+<input type="number" id="stepsInput" min="0" max="200000" step="1" value="0" required>
+</div>
+<div class="fitness-field">
+<label for="minutesInput">Active minutes</label>
+<input type="number" id="minutesInput" min="0" max="1440" step="1" value="0" required>
+</div>
+<div class="fitness-field">
+<label for="caloriesInput">Estimated calories burned</label>
+<input type="number" id="caloriesInput" min="0" max="50000" step="1" value="0" required>
+</div>
+<div class="fitness-field">
+<label for="activityDate">Activity date</label>
+<input type="date" id="activityDate" required>
+</div>
+</div>
+<div class="fitness-actions">
+<button class="fitness-btn" type="submit">Save Activity</button>
+<button class="fitness-btn fitness-secondary" type="button" id="resetToday">Reset Selected Day</button>
+</div>
+<p id="activityMessage" class="fitness-message" role="status"></p>
+</form>
+</section>
+
+<section class="fitness-section">
+<h2>🎯 Daily Goals</h2>
+<div class="fitness-goal-row">
+<div class="fitness-goal-heading"><strong>Steps Goal</strong><span id="stepsProgressText">0 / 8000</span></div>
+<div class="fitness-progress"><div class="fitness-progress-fill" id="stepsProgress"></div></div>
+</div>
+<div class="fitness-goal-row">
+<div class="fitness-goal-heading"><strong>Active Minutes Goal</strong><span id="minutesProgressText">0 / 30</span></div>
+<div class="fitness-progress"><div class="fitness-progress-fill" id="minutesProgress"></div></div>
+</div>
+<h3>Set Your Goals</h3>
+<form id="goalsForm">
+<div class="fitness-form">
+<div class="fitness-field">
+<label for="stepsGoal">Daily steps target</label>
+<input type="number" id="stepsGoal" min="1" max="200000" value="8000" required>
+</div>
+<div class="fitness-field">
+<label for="minutesGoal">Active minutes target</label>
+<input type="number" id="minutesGoal" min="1" max="1440" value="30" required>
+</div>
+</div>
+<div class="fitness-actions"><button type="submit" class="fitness-btn">Save Goals</button></div>
+<p id="goalMessage" class="fitness-message" role="status"></p>
+</form>
+</section>
+
+<section class="fitness-section">
+<h2>💧 Water Tracker</h2>
+<p class="fitness-note">Record the glasses of water you drink. Choose a glass size that suits you.</p>
+<div class="fitness-water">
+<span class="fitness-water-count" id="waterCount">0 glasses</span>
+<button type="button" class="fitness-btn" id="addWater">+ Add Glass</button>
+<button type="button" class="fitness-btn fitness-secondary" id="removeWater">− Remove Glass</button>
+<button type="button" class="fitness-btn fitness-secondary" id="resetWater">Reset</button>
+</div>
+<p id="waterMessage" class="fitness-message" role="status"></p>
+</section>
+
+<section class="fitness-section">
+<h2>📊 Last 7 Days</h2>
+<p class="fitness-note">Your saved daily steps. Days without an entry show zero.</p>
+<div class="fitness-chart" id="weeklyChart"></div>
+</section>
+
+<p class="fitness-note">HealthX Fitness is a general wellness tracker. Activity and calorie values are user-entered estimates, not medical measurements. Browser-saved data is stored on this device and browser only.</p>
+
+</main>
+<script>
+(function () {
+    const STORAGE_KEY = "healthxFitnessDataV1";
+    const today = getDateKey(new Date());
+
+    let data = loadData();
+
+    function getDateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+    }
+
+    function loadData() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (saved && typeof saved === "object") return saved;
+        } catch (error) {}
+        return { activities: {}, water: {}, goals: { steps: 8000, minutes: 30 } };
+    }
+
+    function saveData() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function activityFor(date) {
+        return data.activities[date] || { steps: 0, minutes: 0, calories: 0 };
+    }
+
+    function selectedDate() {
+        return document.getElementById("activityDate").value || today;
+    }
+
+    function numberInput(id) {
+        return Number(document.getElementById(id).value);
+    }
+
+    function showMessage(id, message) {
+        document.getElementById(id).textContent = message;
+    }
+
+    function updateProgress(barId, textId, value, goal) {
+        const percent = Math.min(100, (value / goal) * 100);
+        document.getElementById(barId).style.width = percent + "%";
+        document.getElementById(textId).textContent =
+            value.toLocaleString() + " / " + goal.toLocaleString();
+    }
+
+    function render() {
+        const date = selectedDate();
+        const activity = activityFor(date);
+        const isToday = date === today;
+
+        document.getElementById("stepsValue").textContent = activity.steps.toLocaleString();
+        document.getElementById("minutesValue").textContent = activity.minutes.toLocaleString();
+        document.getElementById("caloriesValue").textContent = activity.calories.toLocaleString();
+
+        document.getElementById("stepsInput").value = activity.steps;
+        document.getElementById("minutesInput").value = activity.minutes;
+        document.getElementById("caloriesInput").value = activity.calories;
+
+        document.querySelector(".fitness-hero p").textContent =
+            isToday ? "Small daily steps. Better long-term habits." :
+            "Viewing activity for " + date + ".";
+
+        updateProgress("stepsProgress", "stepsProgressText", activity.steps, data.goals.steps);
+        updateProgress("minutesProgress", "minutesProgressText", activity.minutes, data.goals.minutes);
+
+        document.getElementById("stepsGoal").value = data.goals.steps;
+        document.getElementById("minutesGoal").value = data.goals.minutes;
+
+        document.getElementById("waterCount").textContent =
+            (data.water[today] || 0) + " glasses";
+
+        renderChart();
+    }
+
+    function renderChart() {
+        const chart = document.getElementById("weeklyChart");
+        chart.replaceChildren();
+
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const key = getDateKey(date);
+            days.push({
+                key: key,
+                label: date.toLocaleDateString(undefined, { weekday: "short" }),
+                steps: activityFor(key).steps
+            });
+        }
+
+        const maximum = Math.max(8000, ...days.map(day => day.steps));
+
+        days.forEach(day => {
+            const column = document.createElement("div");
+            column.className = "fitness-day";
+
+            const value = document.createElement("small");
+            value.textContent = day.steps >= 1000
+                ? (day.steps / 1000).toFixed(1) + "k"
+                : String(day.steps);
+            value.title = day.steps.toLocaleString() + " steps";
+
+            const wrap = document.createElement("div");
+            wrap.className = "fitness-bar-wrap";
+
+            const bar = document.createElement("div");
+            bar.className = "fitness-bar";
+            bar.style.height = Math.max(3, (day.steps / maximum) * 145) + "px";
+            bar.title = day.key + ": " + day.steps.toLocaleString() + " steps";
+            wrap.appendChild(bar);
+
+            const label = document.createElement("small");
+            label.textContent = day.label;
+
+            column.append(value, wrap, label);
+            chart.appendChild(column);
+        });
+    }
+
+    document.getElementById("activityDate").value = today;
+
+    document.getElementById("activityForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const date = selectedDate();
+        const steps = numberInput("stepsInput");
+        const minutes = numberInput("minutesInput");
+        const calories = numberInput("caloriesInput");
+
+        if (!date || !Number.isInteger(steps) || !Number.isInteger(minutes) ||
+            !Number.isInteger(calories) || steps < 0 || steps > 200000 ||
+            minutes < 0 || minutes > 1440 || calories < 0 || calories > 50000) {
+            showMessage("activityMessage", "Please enter valid activity values.");
+            return;
+        }
+
+        data.activities[date] = { steps: steps, minutes: minutes, calories: calories };
+
+        if (saveData()) {
+            showMessage("activityMessage", "Activity saved successfully!");
+        } else {
+            showMessage("activityMessage", "Could not save data in this browser.");
+        }
+
+        render();
+    });
+
+    document.getElementById("activityDate").addEventListener("change", function () {
+        showMessage("activityMessage", "");
+        render();
+    });
+
+    document.getElementById("goalsForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const steps = numberInput("stepsGoal");
+        const minutes = numberInput("minutesGoal");
+
+        if (!Number.isInteger(steps) || !Number.isInteger(minutes) ||
+            steps < 1 || steps > 200000 || minutes < 1 || minutes > 1440) {
+            showMessage("goalMessage", "Please enter valid daily goals.");
+            return;
+        }
+
+        data.goals = { steps: steps, minutes: minutes };
+        showMessage("goalMessage",
+            saveData() ? "Your goals have been saved!" : "Could not save goals in this browser.");
+        render();
+    });
+
+    document.getElementById("addWater").addEventListener("click", function () {
+        data.water[today] = Math.min(100, (data.water[today] || 0) + 1);
+        saveData();
+        render();
+        showMessage("waterMessage", "Water intake updated.");
+    });
+
+    document.getElementById("removeWater").addEventListener("click", function () {
+        data.water[today] = Math.max(0, (data.water[today] || 0) - 1);
+        saveData();
+        render();
+        showMessage("waterMessage", "Water intake updated.");
+    });
+
+    document.getElementById("resetWater").addEventListener("click", function () {
+        data.water[today] = 0;
+        saveData();
+        render();
+        showMessage("waterMessage", "Today's water count has been reset.");
+    });
+
+    document.getElementById("resetToday").addEventListener("click", function () {
+        const date = selectedDate();
+        delete data.activities[date];
+        saveData();
+        render();
+        showMessage("activityMessage", "Activity for the selected day has been reset.");
+    });
+
+    render();
+})();
+</script>
+
+</body>
+</html>
+```
+
+After pasting, press Ctrl + S and refresh the page. I changed only the CSS colors and visual styling; your HTML sections, navigation links, element IDs, and JavaScript logic remain the same.

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthX | Unified Family & Personal Health Locker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <div class="gps-prompt-banner">
+    <div class="gps-prompt-inner">
+      <div id="gpsBannerText"></div>
+      <button id="gpsConnectBtn" class="btn-outline" style="padding:5px 12px;font-size:12px;" onclick="connectLiveGPS(false)">📡 Connect Live GPS</button>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-top">
+        <a href="./index.html" class="brand">
+          <span class="brand-mark">HX</span>
+          <span>
+            <span class="brand-title">HealthX</span>
+            <span class="brand-sub">Transparent Healthcare, Right Around the Corner.</span>
+          </span>
+        </a>
+        <div class="header-controls">
+          <div class="location-box">
+            <span>📍</span>
+            <input id="headerLocationInput" type="text" placeholder="Type area..." oninput="handleLocationTyping(this.value)" onfocus="handleLocationTyping(this.value)" />
+            <div id="locSuggestionsBox" class="loc-suggestions"></div>
+          </div>
+          <button type="button" class="btn-ambulance" onclick="openAmbulanceModal()">🚑 Emergency Ambulance</button>
+          <div class="profile-menu-wrap">
+            <button type="button" class="profile-trigger-btn" onclick="toggleProfileDropdown()">
+              <span id="profileAvatarMini" class="profile-avatar-mini">GU</span>
+              <span id="profileBtnLabel">Guest User</span>
+              <span>▾</span>
+            </button>
+            <div id="profileDropdown" class="profile-dropdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./categories.html" class="nav-link">Categories</a>
+        <a href="./bloodbank.html" class="nav-link">Blood Bank</a>
+        <a href="./costs.html" class="nav-link">Cost Estimator</a>
+        <a href="./locker.html" class="nav-link active">Records</a>
+        <a href="./feedback.html" class="nav-link">Feedback</a>
+        <a href="./fitness.html" class="nav-link">Fitness Tracker</a>
+       <a href="./about.html" class="nav-link" data-i18n="navAbout">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h2>Unified Family &amp; Personal Health Locker</h2>
+        <p>Select any family member below to view and manage their Lab Reports, Personal Certificates, and Medications in one single place.</p>
+      </div>
+    </div>
+
+    <!-- FAMILY MEMBER SELECTOR ROW -->
+    <div id="unifiedFamilySelector" class="grid-4"></div>
+
+    <!-- UNIFIED 3-COLUMN LOCKER FOR SELECTED MEMBER -->
+    <div id="unifiedLockerContent"></div>
+  </main>
+
+  <div id="appModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div id="appModalContent" class="modal-box"></div>
+  </div>
+  <div id="toastBox" class="toast"></div>
+
+  <footer>
+    <div class="container"><strong>HealthX</strong> — Unified Family Digital Health Locker.</div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
